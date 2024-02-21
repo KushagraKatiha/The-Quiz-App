@@ -13,7 +13,7 @@ const addQuestion = async (req, res) => {
             questionText,
             option,
             correctOption,
-            // createdBy: req.user._id
+            createdBy: req.user._id
         });
 
         await question.save();
@@ -60,7 +60,7 @@ const addResult = async (req, res) => {
 
         const result = new Result({
             score,
-            // user: req.user._id
+            user: req.user._id
         });
 
         await result.save();

@@ -60,7 +60,7 @@ const login = async(req,res)=> {
         const token = user.createToken()
 
         res.cookie('token',token,{
-            expires: '24h',
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
             httpOnly: true
         })
 
