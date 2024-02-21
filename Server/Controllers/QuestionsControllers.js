@@ -13,7 +13,7 @@ const addQuestion = async (req, res) => {
             questionText,
             option,
             correctOption,
-            createdBy: req.user._id
+            // createdBy: req.user._id
         });
 
         await question.save();

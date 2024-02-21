@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import BaseComponent from './BaseComponent';
 import { useDarkMode } from '../Context/DarkModeContext';
+import axios from 'axios';
 
 const AddQuestionComponent = () => {
   const { darkMode } = useDarkMode();
   const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctOption, setCorrectOption] = useState('');
+  const [questionsAdded, setQuestionsAdded] = useState(0);
 
   const handleOptionChange = (index, value) => {
     const newOptions = [...options];
@@ -14,13 +16,45 @@ const AddQuestionComponent = () => {
     setOptions(newOptions);
   };
 
-  const handleAddQuestion = () => {
-    // Implement logic to add the question with the provided details
-    console.log('Question Added:', { questionText, options, correctOption });
-    // Reset the form after adding the question
-    setQuestionText('');
-    setOptions(['', '', '', '']);
-    setCorrectOption('');
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('http://localhost:9090/logout',{
+        withCredentials: true
+      });
+      console.log(response.data);
+      alert('User Logged Out')
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const handleAddQuestion = async () => {
+    if (questionsAdded < 2) {
+      try {
+        const response = await axios.post('http://localhost:9090/questions/add', {
+          questionText: questionText,
+          option: options,
+          correctOption: correctOption
+        }, {
+          withCredentials: true
+        });
+
+        if (response.status === 201) {
+          alert('Question Added');
+          setQuestionText('');
+          setOptions(["", "", "", ""]);
+          setCorrectOption('');
+          setQuestionsAdded(questionsAdded + 1);
+          console.log(questionsAdded);
+        }
+
+        console.log(response.data);
+      } catch (error) {
+        console.error(error.message);
+      }
+    } else {
+      handleLogout(); // Execute handleLogout when Logout button is clicked
+    }
   };
 
   return (
@@ -57,7 +91,7 @@ const AddQuestionComponent = () => {
           onClick={handleAddQuestion}
           className={`bg-green-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-green-700' : 'hover:bg-green-400'}`}
         >
-          Add Question
+          {questionsAdded < 2 ? 'Add Question' : 'Logout'}
         </button>
       </form>
     </BaseComponent>

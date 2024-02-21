@@ -9,6 +9,7 @@ const jwtToken = (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET);
         req.user = decoded;
+        console.log("Cookies Detected");
         next();
     } catch (error) {
         return res.status(500).json({ message: error.message });
