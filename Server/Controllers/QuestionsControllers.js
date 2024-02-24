@@ -96,6 +96,7 @@ const addResult = async (req, res) => {
         res.status(201).json({
             message: 'Result created successfully',
             success: true,
+            userEmail: req.user.email,
             userName: req.user.name
         });
 
@@ -108,7 +109,15 @@ const addResult = async (req, res) => {
 }
 
 const showResult = async (req, res) => {
+
     try {
+
+        if(!(req.user.profileType === 'teacher')){
+            throw new Error('You are not authorized to view results');
+        }
+
+        console.log(req.user.profileType);
+
         const results = await Result.find({});
 
         res.status(200).json({

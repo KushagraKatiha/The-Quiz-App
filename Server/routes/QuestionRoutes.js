@@ -9,6 +9,6 @@ router.post('/questions/show', getQuestion)
 router.get('/questions/availableTests', availableTests)
 // route to see result
 router.post('/questions/addResult', jwtToken, addResult)
-router.get('/questions/result', showResult)
+router.get('/questions/result', jwtToken, showResult)
 
 module.exports = router 
