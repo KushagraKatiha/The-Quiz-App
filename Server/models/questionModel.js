@@ -4,8 +4,8 @@ const QuestionSchema = new mongoose.Schema({
     option: [String],
     correctOption: Number,
     createdBy: {
-        default: null,
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'usermodels'
     },
 })
 

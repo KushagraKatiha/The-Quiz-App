@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const usermodels = require('../models/usermodels');
 
-const jwtToken = (req, res, next) => {
+const jwtToken = async (req, res, next) => {
     const token = req.cookies.token;
     if (!token) {
         return res.status(401).json({ message: "Unauthorized" });
@@ -8,11 +9,12 @@ const jwtToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET);
-        req.user = decoded;
-        console.log("Cookies Detected");
+        console.log(decoded.id);
+        const user = await usermodels.findById(decoded.id).select('-password');
+        req.user = user;
         next();
     } catch (error) {
-        return res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 }
 

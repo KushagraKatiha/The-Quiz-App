@@ -5,7 +5,7 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:[true,"name is requied"],
         MaxLength:[15,"name is too long"],
-        MinLength:[true,"name is too short"],
+        MinLength:[2,"name is too short"],
         trim:true,  
 },
 email:{
@@ -29,7 +29,7 @@ profileType:{
 
 UserSchema.methods = {
     createToken: function(){
-        return JWT.sign({userId:this._id},process.env.SECRET,{
+        return JWT.sign({id:this._id},process.env.SECRET,{
             expiresIn:'24h'
         })
     }

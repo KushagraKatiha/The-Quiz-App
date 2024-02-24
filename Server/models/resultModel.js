@@ -6,9 +6,8 @@ const ResultSchema = new mongoose.Schema({
         required: [true, "score is required"],
     },
     user: {
-        default: null,
-        type: mongoose.Schema.Types.ObjectId, ref: 'User'
+        type: mongoose.Schema.Types.ObjectId, ref: 'usermodels'
     }
-})
+}, { timestamps: true })
 
 module.exports = mongoose.model('Result', ResultSchema);

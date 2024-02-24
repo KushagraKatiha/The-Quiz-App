@@ -50,8 +50,6 @@ const login = async(req,res)=> {
         
         const user = await UserSchema
         .findOne({email}).select('+password')
-
-        console.log(user);
         
         if(!user){
             throw new Error('User does not exist')
@@ -62,7 +60,7 @@ const login = async(req,res)=> {
         }
 
         const token = user.createToken()
-
+        console.log(token);
         res.cookie('token',token,{
             expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
             httpOnly: true

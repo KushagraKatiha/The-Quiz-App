@@ -1,5 +1,7 @@
 const Question = require('../models/questionModel');
 const Result = require('../models/resultModel');
+const UserSchema = require('../models/usermodels');
+
 
 const addQuestion = async (req, res) => {
     const {questionText, option, correctOption} = req.body;
@@ -13,7 +15,7 @@ const addQuestion = async (req, res) => {
             questionText,
             option,
             correctOption,
-            // createdBy: req.user._id
+            createdBy: req.user.id
         });
 
         await question.save();
@@ -31,9 +33,35 @@ const addQuestion = async (req, res) => {
     }
 }
 
+const availableTests = async (req, res) => {
+    try{
+        const tests = await UserSchema.find({profileType: 'teacher'});
+
+        const teachers = tests.map(test => {
+            return {
+                name: test.name,
+                testId: test._id
+            }
+        });
+
+        res.status(200).json({
+            teachers,
+            success: true
+        });
+    }catch(err){
+        res.status(500).json({
+            message: err.message,
+            success: false
+        })
+    }
+}
+
 const getQuestion = async (req, res) => {
+
+    const {testId} = req.body;
+
     try {
-        const questions = await Question.find({});
+        const questions = await Question.find({createdBy: testId});
 
         res.status(200).json({
             questions,
@@ -60,14 +88,15 @@ const addResult = async (req, res) => {
 
         const result = new Result({
             score,
-            user: req.user._id
+            user: req.user.id
         });
 
         await result.save();
 
         res.status(201).json({
             message: 'Result created successfully',
-            success: true
+            success: true,
+            userName: req.user.name
         });
 
     } catch (err) {
@@ -98,6 +127,7 @@ const showResult = async (req, res) => {
 module.exports = {
     addQuestion,
     getQuestion,
+    availableTests,
     addResult,
     showResult
 }
