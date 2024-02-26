@@ -27,9 +27,9 @@ const LoginAccount = () => {
                 console.log(userProfileType)
 
                 if (userProfileType === 'student') {
-                    navigate('/show-question');
+                    navigate('/student-option-page');
                 } else if (userProfileType === 'teacher') {
-                    navigate('/add-question');
+                    navigate('/teacher-option-page');
                 }
             }
         } catch (err) {

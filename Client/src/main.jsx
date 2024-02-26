@@ -7,17 +7,23 @@ import LoginAccount from './Component/LoginAccount.jsx'
 import AddQuestionComponent from './Component/AddQuestionComponent.jsx'
 import { DarkModeProvider } from './Context/DarkModeContext.jsx';
 import ShowQuestionsComponent from './Component/ShowQuestionComponent.jsx'
-import ShowResultsComponent from './Component/ShowResultsComponent.jsx'
 import App from './App.jsx'
+import ViewResults from './Component/ViewResults.jsx'
+import TeacherOptionPage from './Component/TeacherOptionPage.jsx'
+import StudentOptionPage from './Component/StudentOptionPage.jsx'
+import AvailableTests from './Component/AvailableTests.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App/>} >
           <Route path = "/" element={<CreateAccount/>} />
           <Route path="/login-account" element={<LoginAccount/>} />
+          <Route path="/teacher-option-page" element={<TeacherOptionPage/>} />
+          <Route path="/student-option-page" element={<StudentOptionPage/>} />
           <Route path="/add-question" element={<AddQuestionComponent/>} />
-          <Route path="/show-question" element={<ShowQuestionsComponent/>} />
-          <Route path="/show-results" element={<ShowResultsComponent/>} />
+          <Route path="/view-tests" element={<AvailableTests/>}/>
+          <Route path="/view-question/:testId" element={<ShowQuestionsComponent/>} />
+          <Route path="/view-results" element={<ViewResults/>} />
     </Route>
   )
 )

@@ -59,7 +59,7 @@ const availableTests = async (req, res) => {
 const getQuestion = async (req, res) => {
 
     const {testId} = req.body;
-
+    console.log(req.body);
     try {
         const questions = await Question.find({createdBy: testId});
 
@@ -79,16 +79,24 @@ const getQuestion = async (req, res) => {
 // Result Schema Controllers
 
 const addResult = async (req, res) => {
-    const {score} = req.body;
+    const {score, maxScore} = req.body;
+
+    if(!(req.user)){
+        throw new Error('Login to add result');
+    }
 
     try {
-        if (!score) {
+        if (!score || !maxScore) {
             throw new Error('All fields are required');
         }
 
         const result = new Result({
             score,
-            user: req.user.id
+            maxScore,
+            user:{
+                name: req.user.name,
+                email: req.user.email
+            }
         });
 
         await result.save();
@@ -96,8 +104,6 @@ const addResult = async (req, res) => {
         res.status(201).json({
             message: 'Result created successfully',
             success: true,
-            userEmail: req.user.email,
-            userName: req.user.name
         });
 
     } catch (err) {

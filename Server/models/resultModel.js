@@ -5,8 +5,13 @@ const ResultSchema = new mongoose.Schema({
         type: Number,
         required: [true, "score is required"],
     },
+    maxScore: {
+        type: Number,
+        required: [true, "full score is required"],
+    },
     user: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'usermodels'
+        name: String,
+        email: String
     }
 }, { timestamps: true })
 

@@ -7,7 +7,11 @@ const ViewResults = () => {
     const [results, setResults] = useState([]);
 
   function handleDone(){
-    navigate("/option-page")
+    if(document.referrer === "http://localhost:9090/add-question"){
+      navigate('/teacher-option-page');
+  }else{
+    navigate('/student-option-page');
+  }
   }
 
   useEffect(() => {
@@ -31,19 +35,18 @@ const ViewResults = () => {
       // Add more questions as needed
     ];
 
-    setQuestions(dummyResults);
+    setResults(dummyResults);
   }, []);
-  };
 
   return (
     <BaseComponent>
       <h1 className="text-4xl font-bold text-center mb-4">Result List</h1>
       <ul className="space-y-4">
         {results.map((result) => (
-          <li key={result.id} className="border rounded-md p-4">
-            <h2 className="text-xl font-semibold mb-2">Student's Name: {result.user.name}</h2>
-            <h2 className="text-xl font-semibold mb-2">Student's Email: {result.user.email}</h2>
-            <h1 className="text-xl font-semibold mb-2">Student's Marks: {result.score}</h1>
+          <li key={result.score} className="border rounded-md p-4">
+            <h1 className="text-xl font-semibold mb-2">Marks: {result.score}</h1>
+            <h2 className="text-lg font-semibold mb-2">Student's Name: {result.user.name}</h2>
+            <h2 className="text-lg font-semibold mb-2">Student's Email: {result.user.email}</h2>
           </li>
         ))}
       </ul>
@@ -58,5 +61,9 @@ const ViewResults = () => {
       </div>
     </BaseComponent>
   );
+
+  };
+
+  
 
 export default ViewResults;

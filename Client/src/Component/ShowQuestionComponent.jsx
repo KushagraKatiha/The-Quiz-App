@@ -1,32 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import BaseComponent from './BaseComponent';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const ShowQuestionsComponent = () => {
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [result, setResult] = useState(0);
 
-  useEffect(() => {
-    // Fetch questions from an API or database and set them in state
-    // For simplicity, I'm initializing with dummy data
-    const dummyQuestions = [
-      {
-        id: 1,
-        questionText: 'What is your favorite color?',
-        options: ['Red', 'Blue', 'Green', 'Yellow'],
-        correctOption: 2, // Index of the correct option
-      },
-      {
-        id: 2,
-        questionText: 'What is the capital of France?',
-        options: ['Berlin', 'Paris', 'Madrid', 'Rome'],
-        correctOption: 1, // Index of the correct option
-      },
-      // Add more questions as needed
-    ];
+  const { testId } = useParams();
 
-    setQuestions(dummyQuestions);
-  }, []);
+  useEffect(() => {
+    axios.post('http://localhost:9090/questions/show', {
+      testId: testId
+    })
+    .then((response) => {
+      const questionArr = response.data.questions.map(question => ({
+        id: question._id, // Assuming _id is the unique identifier for each question in MongoDB
+        questionText: question.questionText,
+        options: question.option,
+        correctOption: question.correctOption
+      }));
+      console.log("question arr is: ", questionArr);
+      setQuestions(questionArr);  // Set the state here
+    })
+    .catch((error) => {
+      console.error("Error fetching questions:", error);
+    });
+  }, [testId]);
+
+  useEffect(() => {
+    console.log(`questions are: ${JSON.stringify(questions)}`);
+  }, [questions]);
+  
 
   const handleOptionChange = (questionId, selectedOption) => {
     setUserAnswers((prevAnswers) => ({
@@ -37,7 +43,7 @@ const ShowQuestionsComponent = () => {
 
   const handleCheckAnswers = () => {
     let newResult = 0;
-
+    console.log(result);
     questions.forEach((question) => {
       const userAnswer = userAnswers[question.id];
       if (userAnswer === question.correctOption) {
@@ -46,7 +52,7 @@ const ShowQuestionsComponent = () => {
     });
 
     setResult(newResult);
-  };
+  }
 
   return (
     <BaseComponent>
@@ -62,9 +68,9 @@ const ShowQuestionsComponent = () => {
                     <input
                       type="radio"
                       name={`question-${question.id}`}
-                      value={index}
-                      checked={userAnswers[question.id] === index}
-                      onChange={() => handleOptionChange(question.id, index)}
+                      value={index+1}
+                      checked={userAnswers[question.id] === index + 1}
+                      onChange={() => handleOptionChange(question.id, index+1)}
                     />
                     {option}
                   </label>

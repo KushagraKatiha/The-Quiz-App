@@ -1,12 +1,9 @@
 const mongoose = require('mongoose')
 const QuestionSchema = new mongoose.Schema({
-    questionText: String, 
+    questionText: String,
     option: [String],
     correctOption: Number,
-    createdBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'usermodels'
-    },
+    createdBy: String,
 })
 
 module.exports = mongoose.model('Question', QuestionSchema)
