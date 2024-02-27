@@ -1,4 +1,6 @@
 const UserSchema  = require('../models/usermodels')
+const bcrypt = require('bcryptjs')
+const emailValidator = require('email-validator')
 
 const signup = async(req,res)=> {
     const {name,email,password,confirmPassword,profileType} = req.body
@@ -9,6 +11,10 @@ const signup = async(req,res)=> {
 
         if(password !== confirmPassword){
             throw new Error('Passwords do not match')
+        }
+
+        if(!(emailValidator.validate(email))){
+            throw new Error('Please enter a valid email')
         }
 
         // Check if user already exists
@@ -55,7 +61,7 @@ const login = async(req,res)=> {
             throw new Error('User does not exist')
         }
         
-        if(user.password !== password){
+        if(!(bcrypt.compare(password , user.password))){
             throw new Error('Invalid credentials')
         }
 

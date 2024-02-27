@@ -9,7 +9,6 @@ const jwtToken = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET);
-        console.log(decoded.id);
         const user = await usermodels.findById(decoded.id).select('-password');
         req.user = user;
         next();

@@ -1,5 +1,7 @@
+require('dotenv').config()
 const mongoose = require('mongoose')
 const JWT = require('jsonwebtoken')
+const bcrypt = require('bcryptjs')
 const UserSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -32,7 +34,16 @@ UserSchema.methods = {
         return JWT.sign({id:this._id},process.env.SECRET,{
             expiresIn:'24h'
         })
-    }
+    }, 
 }
+
+UserSchema.pre('save', async function(next){
+    if(!this.isModified('password')){
+        next();
+    }else{
+            this.password = await bcrypt.hash(this.password, 10);
+          next();
+    }
+ })
 
 module.exports = mongoose.model('usermodels',UserSchema)

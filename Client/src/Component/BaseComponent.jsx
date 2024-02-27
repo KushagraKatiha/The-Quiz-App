@@ -2,14 +2,10 @@ import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
 import Switch from 'react-switch';
 import { useDarkMode } from '../Context/DarkModeContext';
-import { Outlet } from 'react-router-dom';
 
 
-// 
 const BaseComponent = ({ children }) => {
     const { darkMode, toggleDarkMode } = useDarkMode();
-    // const [darkMode, setDarkMode] = useState(false);
-
     const fadeIn = useSpring({
         opacity: 1,
         from: { opacity: 0 },
@@ -20,10 +16,6 @@ const BaseComponent = ({ children }) => {
         transform: darkMode ? 'translateX(24px)' : 'translateX(0)',
     });
 
-    // const toggleDarkMode = () => {
-    //     setDarkMode(!darkMode);
-    // };
-
     return (
         <div className={`flex items-center justify-center min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100'}`}>
             {/* Left Side */}
@@ -33,7 +25,7 @@ const BaseComponent = ({ children }) => {
 
             {/* Right Side */}
             <animated.div className="w-1/2 p-8" style={fadeIn}>
-                <img src="vite.svg" alt="App Screenshot" className="w-full h-auto rounded-md" />
+                <img src="https://images.pexels.com/photos/3769714/pexels-photo-3769714.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="App Screenshot" className="w-auto border-8 border-red-600 h-auto rounded-full" />
             </animated.div>
 
             {/* Dark Mode Switch */}

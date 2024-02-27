@@ -8,7 +8,7 @@ const ViewResults = () => {
     const [results, setResults] = useState([]);
 
   function handleDone(){
-    if(document.referrer === "http://localhost:9090/add-question"){
+    if(document.referrer === "http://localhost:9090/add-question" || document.referrer === "http://localhost:9090/teacher-option-page"){
       navigate('/teacher-option-page');
   }else{
     navigate('/student-option-page');

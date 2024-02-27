@@ -28,6 +28,10 @@ const handleAttemptTest = async ()=>{
   navigate(`/view-question/${testId}`)    
 }
 
+const handleExit = () => {
+  navigate('/student-option-page')
+}
+
   return (
     <BaseComponent>
       <h1 className="text-4xl font-bold text-center mb-4">Available Tests</h1>
@@ -43,6 +47,12 @@ const handleAttemptTest = async ()=>{
                     type="button"
                     value="Attempt Test"
                     onClick={handleAttemptTest}
+                    className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
+                />
+                <input
+                    type="button"
+                    value="Exit"
+                    onClick={handleExit}
                     className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
                 />
             </form>
