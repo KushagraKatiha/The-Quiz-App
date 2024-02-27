@@ -1,6 +1,76 @@
 const UserSchema  = require('../models/usermodels')
 const bcrypt = require('bcryptjs')
 const emailValidator = require('email-validator')
+const sendOTP = require('../Utils/sendOTP')
+const otpModel = require('../models/otpModel')
+
+const mailOTP = async (req,res)=> {
+     // Send and verify OTP sent to mail here
+     const otp = Math.floor(100000 + Math.random() * 900000)
+
+    const {email} = req.body
+    try{
+         // Send OTP to mail
+     await sendOTP(email,otp)
+
+    // Save OTP to database
+    
+        const savedEmail = await otpModel.findOneAndUpdate({email}, {otp}, {new: true, upsert: true})
+        if(!savedEmail){
+            const otpData = new otpModel({
+                email,
+                otp
+            })
+    
+            await otpData.save()
+        }   
+
+
+    res.status(200).json({
+        message: "Otp saved successfully",
+        success: true
+    })
+    }catch(err){
+        res.status(400).json({
+            messgae: err.message,
+            success: false
+        })
+    }
+    
+}
+
+const verifyOTP = async(req,res)=> {
+    // Send and verify OTP sent to mail here
+    const {email,otp} = req.body
+
+    try{
+        if(!email || !otp){
+            throw new Error('All fields are required')
+        }
+
+        const otpData = await otpModel.findOne({email})
+
+    if(!otpData){
+        throw new Error('OTP not found')
+    }
+    console.log(otpData.otp);
+
+    if(otpData.otp  != otp){
+        throw new Error('Invalid OTP')
+    }
+
+    res.status(200).json({
+        message: 'OTP verified successfully',
+        success: true
+    })
+    }catch(err){
+        res.status(400).json({
+            message: err.message,
+            success: false
+        })
+    
+    }
+}
 
 const signup = async(req,res)=> {
     const {name,email,password,confirmPassword,profileType} = req.body
@@ -23,6 +93,12 @@ const signup = async(req,res)=> {
         
         if(userExists){
             throw new Error('User already exists')
+        }
+
+        const isEmailVerified = await otpModel.findOne({email})
+
+        if(!isEmailVerified){
+            throw new Error('Please verify your email address first')
         }
 
         const user = new UserSchema({
@@ -109,5 +185,7 @@ const logout = async(req,res)=> {
 module.exports = {
     signup,
     login,
-    logout
+    logout,
+    mailOTP,
+    verifyOTP
 }
