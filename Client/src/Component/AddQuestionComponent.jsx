@@ -9,7 +9,6 @@ const AddQuestionComponent = () => {
   const [questionText, setQuestionText] = useState('');
   const [options, setOptions] = useState(['', '', '', '']);
   const [correctOption, setCorrectOption] = useState('');
-  const [questionsAdded, setQuestionsAdded] = useState(0);
 
   const navigate = useNavigate();
 
@@ -20,7 +19,6 @@ const AddQuestionComponent = () => {
   };
 
   const handleAddQuestion = async () => {
-    if (questionsAdded < 10) {
       try {
         const response = await axios.post('http://localhost:9090/questions/add', {
           questionText: questionText,
@@ -43,10 +41,11 @@ const AddQuestionComponent = () => {
       } catch (error) {
         console.error(error.message);
       }
-    }else{
-      navigate('/teacher-option-page');
-    }
   };
+
+  const handleDone = ()=>{
+    navigate('/teacher-option-page')
+  }
 
   return (
     <BaseComponent>
@@ -82,7 +81,15 @@ const AddQuestionComponent = () => {
           onClick={handleAddQuestion}
           className={`bg-green-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-green-700' : 'hover:bg-green-400'}`}
         >
-          {questionsAdded < 10 ? 'Add Question' : 'Done'}
+          Add Question
+        </button>
+
+        <button
+          type="button"
+          onClick={handleDone}
+          className={`bg-green-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-green-700' : 'hover:bg-green-400'}`}
+        >
+          Done
         </button>
       </form>
     </BaseComponent>

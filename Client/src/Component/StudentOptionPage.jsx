@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import BaseComponent from "./BaseComponent";
 import { useDarkMode } from "../Context/DarkModeContext";
+import axios from "axios";
 
 const StudentOptionPage = () => {
   const navigate = useNavigate();
@@ -13,6 +14,19 @@ const StudentOptionPage = () => {
 
   const handleViewResults = async () => {
     navigate("/view-results");
+  };
+
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('http://localhost:9090/logout',{
+        withCredentials: true
+      });
+      console.log(response.data);
+      alert('User Logged Out')
+      navigate('/');
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (
@@ -38,6 +52,15 @@ const StudentOptionPage = () => {
           type="button"
           value="View Results"
           onClick={handleViewResults}
+          className={`bg-blue-500 text-white px-4 py-2 rounded-md mt-10 ${
+            darkMode ? "hover:bg-blue-700" : "hover:bg-blue-400"
+          }`}
+        />
+
+        <input
+          type="button"
+          value="Logout"
+          onClick={handleLogout}
           className={`bg-blue-500 text-white px-4 py-2 rounded-md mt-10 ${
             darkMode ? "hover:bg-blue-700" : "hover:bg-blue-400"
           }`}

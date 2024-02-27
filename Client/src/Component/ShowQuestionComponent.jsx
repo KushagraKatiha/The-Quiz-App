@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import BaseComponent from './BaseComponent';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ShowQuestionsComponent = () => {
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [result, setResult] = useState(0);
+  const [showResults, setShowResults] = useState(false);
+
+  const navigate = useNavigate();
 
   const { testId } = useParams();
 
@@ -54,6 +57,33 @@ const ShowQuestionsComponent = () => {
     setResult(newResult);
   }
 
+  const handleSaveResults = async () => {
+    console.log(result);
+    console.log(questions.length);
+
+    try{
+      await axios.post('http://localhost:9090/questions/addResult', {
+      score: result, 
+      maxScore: questions.length
+    }, {withCredentials: true})
+    alert('Results saved to the database!');
+    }catch(err){
+      alert('Something went wrong !')
+    }
+    
+  };
+
+  const handleFinish = () => {
+    handleCheckAnswers()
+
+    setShowResults(true)
+  }
+
+  const handleDone = () => {
+    // Navigate to the student option page
+    navigate('/student-option-page');
+  };
+
   return (
     <BaseComponent>
       <h1 className="text-4xl font-bold text-center mb-4">Question List</h1>
@@ -83,15 +113,26 @@ const ShowQuestionsComponent = () => {
       <div className="text-center mt-4">
         <button
           type="button"
-          onClick={handleCheckAnswers}
+          onClick={showResults ? handleSaveResults : handleFinish}
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
-          Check Answers
+          {showResults ? 'Save Results' : 'Finish'}
         </button>
+        {showResults && (
+          <button
+            type="button"
+            onClick={handleDone}
+            className="ml-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700"
+          >
+            Done
+          </button>
+        )}
       </div>
-      <p className="text-center mt-4">
-        Result: {result} out of {questions.length}
-      </p>
+      {showResults && (
+        <p className="text-center mt-4">
+          Result: {result} out of {questions.length}
+        </p>
+      )}
     </BaseComponent>
   );
 };
