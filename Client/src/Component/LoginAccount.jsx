@@ -18,13 +18,9 @@ const LoginAccount = () => {
                 password: password
             }, { withCredentials: true });
 
-            console.log(response.data);
-            console.log(response.status);
-
             if (response.status === 200) {
                 alert('Login successful');
                 const userProfileType = response.data.user.profileType;
-                console.log(userProfileType)
 
                 if (userProfileType === 'student') {
                     navigate('/student-option-page');

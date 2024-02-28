@@ -13,7 +13,7 @@ const StudentOptionPage = () => {
   };
 
   const handleViewResults = async () => {
-    navigate("/view-results");
+    navigate("/view-results", { state: { from: "student-option-page" } });
   };
 
   const handleLogout = async () => {

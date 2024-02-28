@@ -26,7 +26,7 @@ const TeacherOptionPage = () => {
   };
 
   const handleViewResults = async () => {
-    navigate("/view-results");
+    navigate("/view-results", {state: {from: "teacher-option-page"}});
   };
 
   return (
