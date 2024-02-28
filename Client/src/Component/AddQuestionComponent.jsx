@@ -33,7 +33,6 @@ const AddQuestionComponent = () => {
           setQuestionText('');
           setOptions(["", "", "", ""]);
           setCorrectOption('');
-          setQuestionsAdded(questionsAdded + 1);
           console.log(questionsAdded);
         }
 

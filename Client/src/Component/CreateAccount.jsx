@@ -85,7 +85,7 @@ const CreateAccount = () => {
                 setPassword("");
                 setConfirmPassword("");
                 setSelectedRole({ value: 'student', label: 'Student' });
-            }else if
+            }
 
             if (response.status !== 400) {
                 navigate('/login-account');
