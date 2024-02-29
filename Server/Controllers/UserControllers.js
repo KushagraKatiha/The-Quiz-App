@@ -197,9 +197,9 @@ try{
         throw new Error('User not logged in')
     }
 
-    const user = await UserSchema.findByIdAndDelete(req.user._id,{ useFindAndModify: false })
+    await otpModel.findOneAndDelete({email: req.user.email}, {useFindAndModify: false})
+    const user = await UserSchema.findOneAndDelete(req.user.email,{ useFindAndModify: false })
     if(!user) throw new Error('User does not exist')
-    console.log(user);
     res.status(200).json({
         message: 'User deleted successfully',
         success: true,

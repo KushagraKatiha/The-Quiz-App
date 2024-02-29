@@ -31,14 +31,14 @@ const StudentOptionPage = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      const response = await axios.delete('http://localhost:9090/delete-account',{
+     await axios.delete('http://localhost:9090/delete-account',{
         withCredentials: true
-      });
-      if(response.data.status === 200){
+      }).then((response) => {
+        console.log(response.data);
         alert('Account Deleted');
         navigate('/');
-      }
-    } catch (err) {
+      });
+      } catch (err) {
       console.log(err.message);
     }
   };

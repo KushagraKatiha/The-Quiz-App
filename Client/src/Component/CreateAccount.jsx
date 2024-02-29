@@ -4,7 +4,8 @@ import BaseComponent from './BaseComponent';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDarkMode } from '../Context/DarkModeContext';
 import axios from 'axios';
-import Modal from 'react-modal';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CreateAccount = () => {
     const navigate = useNavigate();
@@ -20,8 +21,6 @@ const CreateAccount = () => {
     const [otp, setOtp] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
 
     const roleOptions = [
         { value: 'student', label: 'Student' },
@@ -32,13 +31,8 @@ const CreateAccount = () => {
         setSelectedRole(selectedOption);
     };
 
-    const openModal = (message) => {
-        setModalIsOpen(true);
-        setModalMessage(message);
-    };
-
-    const closeModal = () => {
-        setModalIsOpen(false);
+    const showToast = (message, type = 'info') => {
+        toast(message, { type });
     };
 
     const handleSendOtp = async () => {
@@ -54,13 +48,13 @@ const CreateAccount = () => {
 
             if (response.status === 200) {
                 setShowOtpField(true);
-                openModal('OTP sent successfully');
+                showToast('OTP sent successfully', 'success');
             } else {
-                openModal('Failed to send OTP');
+                showToast('Failed to send OTP', 'error');
             }
         } catch (err) {
             console.error(err.message);
-            openModal('Failed to send OTP');
+            showToast('Failed to send OTP', 'error');
         } finally {
             setLoading(false);
         }
@@ -74,8 +68,8 @@ const CreateAccount = () => {
             otp: otp,
         }).then((response) => {
             console.log(response.data);
-
             if (response.data.success === true) {
+                showToast('OTP verified successfully');
                 setShowOtpField(false);
             }
         }).catch((err) => {
@@ -101,7 +95,7 @@ const CreateAccount = () => {
             console.log(response.status);
 
             if (response.status === 201) {
-                openModal('Account created successfully');
+                showToast('Account created successfully', 'success');
                 setName("");
                 setEmail("");
                 setPassword("");
@@ -114,16 +108,17 @@ const CreateAccount = () => {
             }
 
         } catch (err) {
+            const message = err.response.data.message;
             if (message === 'User already exists') {
-                openModal('User already exists');
+                showToast('User already exists', 'error');
             } else if (message === 'Please verify your email address first') {
-                openModal('Please verify your email address first');
+                showToast('Please verify your email address first', 'error');
             } else if (message === 'All fields are required') {
-                openModal('All fields are required');
+                showToast('All fields are required', 'error');
             } else if (message === 'Passwords do not match') {
-                openModal('Passwords do not match');
+                showToast('Passwords do not match', 'error');
             } else if (message === 'Please enter a valid email') {
-                openModal('Please enter a valid email');
+                showToast('Please enter a valid email', 'error');
             } else {
                 console.error(err.message);
             }
@@ -136,7 +131,7 @@ const CreateAccount = () => {
         <BaseComponent>
             <h1 className={`text-4xl font-bold text-center mb-4 ${darkMode ? 'text-green-400' : 'text-purple-600'}`}>The Quiz App</h1>
             <form className="flex-col space-y-4">
-            <input
+                <input
                     type="text"
                     placeholder="Name"
                     value={name}
@@ -199,8 +194,8 @@ const CreateAccount = () => {
                     isSearchable={false}
                     placeholder="Select Role"
                 />
-                    </form>
-                    <input
+            </form>
+            <input
                 type="button"
                 value="Create Account"
                 onClick={handleCreateAccount}
@@ -215,21 +210,9 @@ const CreateAccount = () => {
                 </div>
             )}
 
-            {/* Modal/Popup */}
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Message Modal"
-                className={`Modal ${darkMode ? 'ModalDark' : 'ModalLight'}`}
-                overlayClassName={`Overlay ${darkMode ? 'OverlayDark' : 'OverlayLight'}`}
-            >
-                <div className="text-center">
-                    <p>{modalMessage}</p>
-                    <button onClick={closeModal} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                        Close
-                    </button>
-                </div>
-            </Modal>
+            {/* Toast Container for displaying popups */}
+            <ToastContainer />
+
             <div className={`text-center ${darkMode ? 'text-yellow-500' : 'text-gray-700'}`}>
                 <div className="mb-4">
                     <span>Already have an account?</span>

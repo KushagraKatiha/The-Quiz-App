@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import BaseComponent from './BaseComponent';
 import { useDarkMode } from '../Context/DarkModeContext';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginAccount = () => {
     const navigate = useNavigate();
@@ -10,29 +12,42 @@ const LoginAccount = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const showToast = (message, type = 'info') => {
+        toast(message, { type });
+    };
 
     const handleLogin = async () => {
         try {
+            setLoading(true);
+
             const response = await axios.post('http://localhost:9090/login', {
                 email: email,
                 password: password
             }, { withCredentials: true });
 
             if (response.status === 200) {
-                alert('Login successful');
+                showToast('Login successful', 'success');
                 const userProfileType = response.data.user.profileType;
 
                 if (userProfileType === 'student') {
-                    navigate('/student-option-page');
+                    setTimeout(() => {
+                        navigate('/student-option-page');
+                    }, 2000);
                 } else if (userProfileType === 'teacher') {
-                    navigate('/teacher-option-page');
+                    setTimeout(() => {
+                        navigate('/teacher-option-page');
+                    }, 2000);
                 }
             }
         } catch (err) {
-            alert('Invalid credentials');
+            showToast('Invalid credentials', 'error');
             console.error(err.message);
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <BaseComponent>
@@ -56,6 +71,7 @@ const LoginAccount = () => {
                     type="button"
                     value="Login"
                     onClick={handleLogin}
+                    disabled={loading}
                     className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
                 />
             </form>
@@ -68,6 +84,16 @@ const LoginAccount = () => {
                     <Link to="/forgot-password" className={`${darkMode ? 'text-blue-500' : 'text-blue-700'}`}>Forgot Password?</Link>
                 </div>
             </div>
+
+            {/* Loading Spinner */}
+            {loading && (
+                <div className="fixed top-0 left-0 w-screen h-screen flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="border-t-4 border-blue-500 rounded-full h-12 w-12 animate-spin"></div>
+                </div>
+            )}
+
+            {/* Toast Container for displaying popups */}
+            <ToastContainer />
         </BaseComponent>
     );
 };
