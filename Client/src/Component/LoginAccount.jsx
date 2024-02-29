@@ -64,6 +64,9 @@ const LoginAccount = () => {
                     <span>Don't have an account?</span>
                     <Link to="/" className={`${darkMode ? 'text-blue-500' : 'text-blue-700'} ml-1`}>Create one here</Link>
                 </div>
+                <div className={`mb-4 ${darkMode ? 'text-yellow-500' : 'text-gray-700'}`}>
+                    <Link to="/forgot-password" className={`${darkMode ? 'text-blue-500' : 'text-blue-700'}`}>Forgot Password?</Link>
+                </div>
             </div>
         </BaseComponent>
     );

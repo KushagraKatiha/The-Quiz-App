@@ -2,6 +2,7 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const JWT = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
+const crypto = require('crypto')
 const UserSchema = new mongoose.Schema({
     name:{
         type:String,
@@ -26,6 +27,16 @@ password:{
 profileType:{
     type:String,
     default:"student",
+}, 
+
+forgetPasswordToken:{
+    type:String,
+    default:null
+},
+
+forgetExpiery:{
+    type:Date,
+    default:null
 }
 },{timestamps:true})
 
@@ -35,6 +46,15 @@ UserSchema.methods = {
             expiresIn:'24h'
         })
     }, 
+
+    createForgetPasswordToken: async function(){
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        this.forgetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+        this.forgetExpiery = Date.now() + 15 * 60 * 1000;
+
+        return resetToken;
+    }
 }
 
 UserSchema.pre('save', async function(next){

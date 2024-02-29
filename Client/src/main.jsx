@@ -12,6 +12,8 @@ import ViewResults from './Component/ViewResults.jsx'
 import TeacherOptionPage from './Component/TeacherOptionPage.jsx'
 import StudentOptionPage from './Component/StudentOptionPage.jsx'
 import AvailableTests from './Component/AvailableTests.jsx'
+import ForgetPassword from './Component/ForgetPassword.jsx'
+import ResetPassword from './Component/ResetPassword.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -24,6 +26,8 @@ const router = createBrowserRouter(
           <Route path="/view-tests" element={<AvailableTests/>}/>
           <Route path="/view-question/:testId" element={<ShowQuestionsComponent/>} />
           <Route path="/view-results" element={<ViewResults/>} />
+          <Route path="/forgot-password" element={<ForgetPassword/>} />
+          <Route path="/reset-password/:token" element={<ResetPassword/>} />
     </Route>
   )
 )

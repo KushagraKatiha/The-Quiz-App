@@ -1,7 +1,7 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer')
 
-const sendOTP = async function(email, otp){
+const sendMail = async function(email, subject, content){
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
@@ -15,9 +15,9 @@ const sendOTP = async function(email, otp){
     await transporter.sendMail({
         from: process.env.EMAIL,
         to: email,
-        subject: 'OTP for account verification',
-        text: `Your OTP is ${otp}`
+        subject: subject,
+        text: content
     })
 }
 
-module.exports = sendOTP;
+module.exports = sendMail;
