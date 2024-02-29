@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import BaseComponent from './BaseComponent';
 import { useDarkMode } from '../Context/DarkModeContext';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ForgetPassword = () => {
     const { darkMode } = useDarkMode();
@@ -10,18 +12,22 @@ const ForgetPassword = () => {
     const [email, setEmail] = useState('');
     const [isEmailSent, setIsEmailSent] = useState(false);
 
+    const showToast = (message, type = 'info') => {
+        toast(message, { type });
+    };
+
     const handleForgetPassword = async () => {
         try {
-            // Add logic for sending reset password link to the provided email
             const response = await axios.post('http://localhost:9090/reset-password', {
                 email: email,
             });
 
             if (response.status === 200) {
                 setIsEmailSent(true);
+                showToast('Email sent successfully! Please check your inbox to reset the password.', 'success');
             }
         } catch (err) {
-            alert('Error sending reset password link.');
+            showToast('Error sending reset password link. Please try again.', 'error');
             console.error(err.message);
         }
     }
@@ -29,7 +35,7 @@ const ForgetPassword = () => {
     return (
         <BaseComponent>
             <h1 className={`text-4xl font-bold text-center mb-4 ${darkMode ? 'text-green-400' : 'text-purple-600'}`}>The Quiz App</h1>
-            
+
             {isEmailSent ? (
                 <div className="text-center">
                     <p className={`${darkMode ? 'text-white' : 'text-black'}`}>
@@ -60,6 +66,9 @@ const ForgetPassword = () => {
                     <Link to="/login-account" className={`${darkMode ? 'text-blue-500' : 'text-blue-700'} ml-1`}>Login here</Link>
                 </div>
             </div>
+
+            {/* Toast Container for displaying popups */}
+            <ToastContainer />
         </BaseComponent>
     );
 };

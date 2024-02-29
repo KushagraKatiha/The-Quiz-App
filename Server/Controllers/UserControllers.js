@@ -52,7 +52,6 @@ const verifyOTP = async(req,res)=> {
     if(!otpData){
         throw new Error('OTP not found')
     }
-    console.log(otpData.otp);
 
     if(otpData.otp  != otp){
         throw new Error('Invalid OTP')
@@ -222,7 +221,6 @@ const forgotPassword = async(req,res)=> {
         }
 
         const user = await UserSchema.findOne({email})
-        console.log(user);
         if(!user){
             throw new Error('User does not exist')
         }
@@ -233,16 +231,33 @@ const forgotPassword = async(req,res)=> {
 
         const resetPasswordURL = `http://localhost:5173/reset-password/${resetPasswordToken}`
         const subject = 'Password Reset Request'
-        const message = `<div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <h1 style="color: #333333;">Password Reset</h1>
-        <p style="color: #555555;">Hello ${user.name},</p>
-        <p style="color: #555555;">We received a request to reset your password. Click the link below to reset it:</p>
-        <p style="margin: 20px 0; text-align: center;">
-            <a href=${resetPasswordURL} style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 3px;">Reset Password</a>
-        </p>
-        <p style="color: #555555;">If you didn't request a password reset, you can ignore this email.</p>
-        <p style="color: #555555;">Thank you!</p>
-    </div>
+        const message = `<!DOCTYPE html>
+        <html lang="en">
+        
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Password Reset</title>
+        </head>
+        
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+        
+            <div style="max-width: 600px; margin: 20px auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <h1 style="color: #333333;">Password Reset</h1>
+                <p style="color: #555555;">Hello ${user.name},</p>
+                <p style="color: #555555;">We received a request to reset your password. Click the link below to reset it:</p>
+                <p style="margin: 20px 0; text-align: center;">
+                    <a href="${resetPasswordURL}" style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: #ffffff; text-decoration: none; border-radius: 3px;">Reset Password</a>
+                </p>
+                <p style="color: #555555;">If you didn't request a password reset, you can ignore this email.</p>
+                <p style="color: #555555;">Thank you!</p>
+            </div>
+        
+        </body>
+        
+        </html>
+        
     `
 
       await sendMail(email,subject,message)
@@ -267,8 +282,6 @@ const forgotPassword = async(req,res)=> {
 const resetPassword = async(req, res)=> {
     const {token} = req.params
     const {newPassword} = req.body
-    console.log(token);
-    console.log(newPassword);
     try{
         if(!newPassword){
             throw new Error('Please Enter Password')
@@ -280,7 +293,6 @@ const resetPassword = async(req, res)=> {
             forgetPasswordToken: resetPasswordToken,
             forgetExpiery: {$gt: Date.now()}
         }).select('+password')
-        console.log(user);
         if(!user){
             throw new Error('Invalid token or token expired')
         }

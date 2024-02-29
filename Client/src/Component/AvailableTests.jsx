@@ -3,59 +3,66 @@ import BaseComponent from './BaseComponent';
 import { useDarkMode } from '../Context/DarkModeContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AvailableTests = () => {
-const { darkMode } = useDarkMode();
-const [testId, setTestId] = useState("");
-const [tests, setTests] = useState([]);
+  const { darkMode } = useDarkMode();
+  const [testId, setTestId] = useState("");
+  const [tests, setTests] = useState([]);
 
-const navigate = useNavigate();
+  const navigate = useNavigate();
 
-useEffect(() => {
-  // Fetch questions from an API or database and set them in state
-   axios.get("http://localhost:9090/questions/availableTests")
-  .then((response)=>{
-    console.log(response.data.teachers);
-    setTests(response.data.teachers)
-  })
-  .catch((err)=>{
-    console.log("Error encountered: ", err);
-  })
+  useEffect(() => {
+    // Fetch available tests from an API or database and set them in state
+    axios.get("http://localhost:9090/questions/availableTests")
+      .then((response) => {
+        console.log(response.data.teachers);
+        setTests(response.data.teachers);
+      })
+      .catch((err) => {
+        console.log("Error encountered: ", err);
+        toast.error('Error fetching available tests.');
+      });
+  }, []);
 
-}, []);
+  const handleAttemptTest = async () => {
+    if (testId.trim() === '') {
+      toast.error('Please enter a valid Test Id.');
+      return;
+    }
 
-const handleAttemptTest = async ()=>{
-  navigate(`/view-question/${testId}`)    
-}
+    navigate(`/view-question/${testId}`);
+  };
 
-const handleExit = () => {
-  navigate('/student-option-page')
-}
+  const handleExit = () => {
+    navigate('/student-option-page');
+  };
 
   return (
     <BaseComponent>
       <h1 className="text-4xl font-bold text-center mb-4">Available Tests</h1>
       <form className="flex-col space-y-4">
-                <input
-                    type="text"
-                    placeholder="Enter Test Id"
-                    value={testId}
-                    onChange={(e) => setTestId(e.target.value)}
-                    className={`w-full border rounded-md p-2 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}
-                />
-                <input
-                    type="button"
-                    value="Attempt Test"
-                    onClick={handleAttemptTest}
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
-                />
-                <input
-                    type="button"
-                    value="Exit"
-                    onClick={handleExit}
-                    className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
-                />
-            </form>
+        <input
+          type="text"
+          placeholder="Enter Test Id"
+          value={testId}
+          onChange={(e) => setTestId(e.target.value)}
+          className={`w-full border rounded-md p-2 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}
+        />
+        <input
+          type="button"
+          value="Attempt Test"
+          onClick={handleAttemptTest}
+          className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
+        />
+        <input
+          type="button"
+          value="Exit"
+          onClick={handleExit}
+          className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}
+        />
+      </form>
       <ul className="space-y-4">
         {tests.map((test) => (
           <li key={test.testId} className="border rounded-md p-4">
@@ -64,6 +71,8 @@ const handleExit = () => {
           </li>
         ))}
       </ul>
+      {/* Toast Container for displaying popups */}
+      <ToastContainer />
     </BaseComponent>
   );
 };

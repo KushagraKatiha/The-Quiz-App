@@ -13,6 +13,7 @@ const LoginAccount = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const showToast = (message, type = 'info') => {
         toast(message, { type });
@@ -42,7 +43,7 @@ const LoginAccount = () => {
                 }
             }
         } catch (err) {
-            showToast('Invalid credentials', 'error');
+            setError('Invalid credentials');
             console.error(err.message);
         } finally {
             setLoading(false);
@@ -69,7 +70,7 @@ const LoginAccount = () => {
                 />
                 <input
                     type="button"
-                    value="Login"
+                    value={loading ? 'Logging in...' : 'Login'}
                     onClick={handleLogin}
                     disabled={loading}
                     className={`bg-blue-500 text-white px-4 py-2 rounded-md ${darkMode ? 'hover:bg-blue-700' : 'hover:bg-blue-400'}`}

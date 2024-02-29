@@ -2,28 +2,32 @@ import React, { useState, useEffect } from 'react';
 import BaseComponent from './BaseComponent';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ViewResults = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [results, setResults] = useState([]);
-
-    function handleDone() {
-      if (location.state.from == "teacher-option-page") {
-        navigate('/teacher-option-page');
-      } else if(location.state.from == "student-option-page") {
-        navigate('/student-option-page');
-      }
-    }
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [results, setResults] = useState([]);
 
   useEffect(() => {
     axios.get('http://localhost:9090/questions/result')
-    .then((response)=>{
-      setResults(response.data.results)
-    })
+      .then((response) => {
+        setResults(response.data.results);
+      })
+      .catch((error) => {
+        toast.error('Error fetching results.');
+        console.error(error.message);
+      });
+  }, []);
 
-    }, []);
-
+  function handleDone() {
+    if (location.state.from === "teacher-option-page") {
+      navigate('/teacher-option-page');
+    } else if (location.state.from === "student-option-page") {
+      navigate('/student-option-page');
+    }
+  }
 
   return (
     <BaseComponent>
@@ -46,9 +50,10 @@ const ViewResults = () => {
           Done
         </button>
       </div>
+      {/* Toast Container for displaying popups */}
+      <ToastContainer />
     </BaseComponent>
   );
+};
 
-  };
-
-  export default ViewResults;
+export default ViewResults;

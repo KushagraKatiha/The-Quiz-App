@@ -3,6 +3,8 @@ import BaseComponent from './BaseComponent';
 import { useDarkMode } from '../Context/DarkModeContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AddQuestionComponent = () => {
   const { darkMode } = useDarkMode();
@@ -19,32 +21,33 @@ const AddQuestionComponent = () => {
   };
 
   const handleAddQuestion = async () => {
-      try {
-        const response = await axios.post('http://localhost:9090/questions/add', {
-          questionText: questionText,
-          option: options,
-          correctOption: correctOption
-        }, {
-          withCredentials: true
-        });
+    try {
+      const response = await axios.post('http://localhost:9090/questions/add', {
+        questionText: questionText,
+        option: options,
+        correctOption: correctOption
+      }, {
+        withCredentials: true
+      });
 
-        if (response.status === 201) {
-          alert('Question Added');
-          setQuestionText('');
-          setOptions(["", "", "", ""]);
-          setCorrectOption('');
-          console.log(questionsAdded);
-        }
-
-        console.log(response.data);
-      } catch (error) {
-        console.error(error.message);
+      if (response.status === 201) {
+        toast.success('Question Added');
+        setQuestionText('');
+        setOptions(["", "", "", ""]);
+        setCorrectOption('');
+        console.log(questionsAdded);
       }
+
+      console.log(response.data);
+    } catch (error) {
+      toast.error('Error adding question.');
+      console.error(error.message);
+    }
   };
 
-  const handleDone = ()=>{
-    navigate('/teacher-option-page')
-  }
+  const handleDone = () => {
+    navigate('/teacher-option-page');
+  };
 
   return (
     <BaseComponent>
@@ -91,6 +94,8 @@ const AddQuestionComponent = () => {
           Done
         </button>
       </form>
+      {/* Toast Container for displaying popups */}
+      <ToastContainer />
     </BaseComponent>
   );
 };

@@ -2,18 +2,25 @@ import React, { useState, useEffect } from 'react';
 import BaseComponent from './BaseComponent';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ShowQuestionsComponent = () => {
   const [questions, setQuestions] = useState([]);
   const [userAnswers, setUserAnswers] = useState({});
   const [result, setResult] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-
   const { testId } = useParams();
 
+  const showToast = (message, type = 'info') => {
+    toast(message, { type });
+  };
+
   useEffect(() => {
+    setLoading(true);
     axios.post('http://localhost:9090/questions/show', {
       testId: testId
     })
@@ -24,18 +31,20 @@ const ShowQuestionsComponent = () => {
         options: question.option,
         correctOption: question.correctOption
       }));
-      console.log("question arr is: ", questionArr);
       setQuestions(questionArr);  // Set the state here
     })
     .catch((error) => {
       console.error("Error fetching questions:", error);
+      showToast('Error fetching questions', 'error');
+    })
+    .finally(() => {
+      setLoading(false);
     });
   }, [testId]);
 
   useEffect(() => {
     console.log(`questions are: ${JSON.stringify(questions)}`);
   }, [questions]);
-  
 
   const handleOptionChange = (questionId, selectedOption) => {
     setUserAnswers((prevAnswers) => ({
@@ -46,70 +55,73 @@ const ShowQuestionsComponent = () => {
 
   const handleCheckAnswers = () => {
     let newResult = 0;
-    console.log(result);
     questions.forEach((question) => {
       const userAnswer = userAnswers[question.id];
       if (userAnswer === question.correctOption) {
         newResult += 1;
       }
     });
-
     setResult(newResult);
-  }
+  };
 
   const handleSaveResults = async () => {
-    console.log(result);
-    console.log(questions.length);
-
-    try{
+    try {
+      setLoading(true);
       await axios.post('http://localhost:9090/questions/addResult', {
-      score: result, 
-      maxScore: questions.length
-    }, {withCredentials: true})
-    alert('Results saved to the database!');
-    }catch(err){
-      alert('Something went wrong !')
+        score: result,
+        maxScore: questions.length
+      }, { withCredentials: true });
+      showToast('Results saved to the database!', 'success');
+    } catch (err) {
+      console.error(err.message);
+      showToast('Failed to save results', 'error');
+    } finally {
+      setLoading(false);
     }
-    
   };
 
   const handleFinish = () => {
-    handleCheckAnswers()
-
-    setShowResults(true)
-  }
+    handleCheckAnswers();
+    setShowResults(true);
+  };
 
   const handleDone = () => {
-    // Navigate to the student option page
     navigate('/student-option-page');
   };
 
   return (
     <BaseComponent>
       <h1 className="text-4xl font-bold text-center mb-4">Question List</h1>
-      <ul className="space-y-4">
-        {questions.map((question) => (
-          <li key={question.id} className="border rounded-md p-4">
-            <h2 className="text-xl font-semibold mb-2">{question.questionText}</h2>
-            <ul className="list-disc ml-6">
-              {question.options.map((option, index) => (
-                <li key={index}>
-                  <label>
-                    <input
-                      type="radio"
-                      name={`question-${question.id}`}
-                      value={index+1}
-                      checked={userAnswers[question.id] === index + 1}
-                      onChange={() => handleOptionChange(question.id, index+1)}
-                    />
-                    {option}
-                  </label>
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      {loading && (
+        <div className="flex items-center justify-center h-screen">
+          Loading...
+        </div>
+      )}
+      {!loading && (
+        <ul className="space-y-4">
+          {questions.map((question) => (
+            <li key={question.id} className="border rounded-md p-4">
+              <h2 className="text-xl font-semibold mb-2">{question.questionText}</h2>
+              <ul className="list-disc ml-6">
+                {question.options.map((option, index) => (
+                  <li key={index}>
+                    <label>
+                      <input
+                        type="radio"
+                        name={`question-${question.id}`}
+                        value={index + 1}
+                        checked={userAnswers[question.id] === index + 1}
+                        onChange={() => handleOptionChange(question.id, index + 1)}
+                      />
+                      {option}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      )}
       <div className="text-center mt-4">
         <button
           type="button"
@@ -133,6 +145,9 @@ const ShowQuestionsComponent = () => {
           Result: {result} out of {questions.length}
         </p>
       )}
+
+      {/* Toast Container for displaying popups */}
+      <ToastContainer />
     </BaseComponent>
   );
 };
