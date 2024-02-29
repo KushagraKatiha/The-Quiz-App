@@ -3,6 +3,8 @@ import { Link, useParams } from 'react-router-dom';
 import BaseComponent from './BaseComponent';
 import { useDarkMode } from '../Context/DarkModeContext';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ResetPassword = () => {
     const { darkMode } = useDarkMode();
@@ -11,18 +13,22 @@ const ResetPassword = () => {
     const [newPassword, setNewPassword] = useState('');
     const [isResetSuccessful, setIsResetSuccessful] = useState(false);
 
+    const showToast = (message, type = 'info') => {
+        toast(message, { type });
+    };
+
     const handleResetPassword = async () => {
         try {
-            // Add logic to send the new password along with the token to the server for resetting the password
             const response = await axios.post(`http://localhost:9090/reset-password/${token}`, {
                 newPassword: newPassword,
             });
 
             if (response.status === 200) {
                 setIsResetSuccessful(true);
+                showToast('Password reset successful! Please login.', 'success');
             }
         } catch (err) {
-            alert('Error resetting password.');
+            showToast('Error resetting password. Please try again.', 'error');
             console.error(err.message);
         }
     }
@@ -30,7 +36,7 @@ const ResetPassword = () => {
     return (
         <BaseComponent>
             <h1 className={`text-4xl font-bold text-center mb-4 ${darkMode ? 'text-green-400' : 'text-purple-600'}`}>The Quiz App</h1>
-            
+
             {isResetSuccessful ? (
                 <div className="text-center">
                     <p className={`${darkMode ? 'text-white' : 'text-black'}`}>
@@ -54,6 +60,9 @@ const ResetPassword = () => {
                     />
                 </form>
             )}
+
+            {/* Toast Container for displaying popups */}
+            <ToastContainer />
         </BaseComponent>
     );
 };
