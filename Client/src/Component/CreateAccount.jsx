@@ -10,7 +10,8 @@ import 'react-toastify/dist/ReactToastify.css';
 const CreateAccount = () => {
     const navigate = useNavigate();
     const { darkMode } = useDarkMode();
-
+    
+    const [showPassword, setShowPassword] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -21,6 +22,7 @@ const CreateAccount = () => {
     const [otp, setOtp] = useState('');
 
     const [loading, setLoading] = useState(false);
+
 
     const roleOptions = [
         { value: 'student', label: 'Student' },
@@ -172,20 +174,69 @@ const CreateAccount = () => {
                         />
                     </>
                 )}
-                <input
-                    type="text"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full border rounded-md p-2 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}
-                />
+               <div className="flex flex-col space-y-2 relative">
+               <div className="flex items-center space-x-2 relative">
+                    <input
+                        type={showPassword ? 'text' : 'password'} 
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className={`w-full border rounded-md p-2 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={`absolute right-1 top-1 mt-1 mr-2 px-2 py-1 ${darkMode ? 'text-white' : 'text-black'} ${darkMode ? 'bg-transparent' : 'bg-white'} rounded-md`}
+                    >
+                        {showPassword ? (
+                            // Eye icon when password is visible
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                className="h-6 w-6"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M21 9a8 8 0 11-16 0 8 8 0 0116 0z"
+                                />
+                            </svg>
+                        ) : (
+                            // Closed eye icon when password is hidden
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                                className="h-6 w-6"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M19.34 6.34l-2.2-2.2a10 10 0 00-12.68 0l-2.2 2.2a12 12 0 0115.08 0zM12 14l-1-1m-2 0l-1 1m4 0l-1-1m2 0l-1 1m3-7a9 9 0 00-17.83 2.83L2 9a10 10 0 0019.17-3.17A9 9 0 0022 7m-4-1a5 5 0 11-10 0 5 5 0 0110 0z"
+                                />
+                            </svg>
+                        )}
+                    </button>
+                </div>
                 <input
                     type="text"
                     placeholder="Confirm Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className={`w-full border rounded-md p-2 ${darkMode ? 'bg-gray-800 text-white' : 'bg-white'}`}
-                />
+                    />
+                </div>
                 <Select
                     value={selectedRole}
                     onChange={handleRoleChange}
